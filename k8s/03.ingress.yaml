@@ -1,0 +1,22 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: hello-world-k8s-ingress
+  namespace: __NAMESPACE__
+  labels:
+    website: hello-world-k8s
+  annotations:
+    kubernetes.io/ingress.class: nginx-direct
+spec:
+  rules:
+    - host: __DOMAIN__
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: hello-world-k8s
+              servicePort: 80
+  tls:
+    - hosts:
+        - __DOMAIN__
+      secretName: tls-wildcard-maersk-digital-net

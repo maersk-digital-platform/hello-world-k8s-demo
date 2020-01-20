@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-world-k8s-deployment
+  namespace: hello-world-k8s
+  labels:
+    app: hello-world-k8s
+spec:
+  replicas: 1
+  # replicas: 3
+  strategy:
+    # type: Recreate
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+  selector:
+    matchLabels:
+      app: hello-world-k8s
+  template:
+    metadata:
+      labels:
+        app: hello-world-k8s
+    spec:
+      imagePullSecrets:
+        - name: maerskao
+      containers:
+        - name: hello-world-k8s
+          image: maerskao.azurecr.io/k8s-hello-world-k8s:v1
+          # image: maerskao.azurecr.io/k8s-hello-world-k8s:v2
+          imagePullPolicy: Always
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "256Mi"
+              cpu: "100m"
+          livenessProbe:
+            httpGet:
+              path: /alive
+              port: 80
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 80
+          ports:
+            - containerPort: 80

@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-world-k8s-deployment
+  namespace: __NAMESPACE__
+  labels:
+    app: hello-world-k8s
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hello-world-k8s
+  template:
+    metadata:
+      labels:
+        app: hello-world-k8s
+    spec:
+      imagePullSecrets:
+        - name: maerskao
+      containers:
+        - name: hello-world-k8s
+          image: __IMAGE_ID__:__TAG__
+          # image: __IMAGE_ID__:v2
+          imagePullPolicy: Always
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "256Mi"
+              cpu: "100m"
+          livenessProbe:
+            httpGet:
+              path: /alive
+              port: 80
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 80
+          ports:
+            - containerPort: 80
